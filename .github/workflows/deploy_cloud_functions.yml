@@ -30,5 +30,7 @@ jobs:
         entry_point: 'main'
         event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
         event_trigger_resource: 'projects/carbon-cacao-342313/topics/everyhours'
+        event_trigger_retry: False
         env_vars: 'SPREADSHEET_ID=1HWjwozrxuXa6xSgklXMo4kQzVhHxEyX70pBLiv-VAd8'
         secret_environment_variables: 'NODERPC_ENDPOINT=projects/674562769994/secrets/getBlockURL,OWNER_PUBKEY=projects/674562769994/secrets/wataru_pubkey'
+        service_account_email: 'solana-worker@carbon-cacao-342313.iam.gserviceaccount.com'
