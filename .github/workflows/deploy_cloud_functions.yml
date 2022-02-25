@@ -1,5 +1,4 @@
 name: Deploy Cloud Functions
-runs-on: ubuntu-latest
 
 on:
   workflow_dispatch:
@@ -7,7 +6,9 @@ on:
     branches: [ release ]
 
 jobs:
-  job_id:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
     permissions:
       contents: 'read'
       id-token: 'write'
