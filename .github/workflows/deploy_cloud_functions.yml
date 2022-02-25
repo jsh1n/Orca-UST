@@ -23,6 +23,7 @@ jobs:
 
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloud-functions@v0.7.2'
+      timeout-minutes: 10
       with:
         name: 'solana-worker'
         runtime: 'nodejs16'
