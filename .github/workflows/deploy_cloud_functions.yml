@@ -1,5 +1,5 @@
 name: Deploy Cloud Functions
-uses: google-github-actions/deploy-cloud-functions@v0.7.2
+runs-on: ubuntu-latest
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
         credentials_json: '${{ secrets.gcp_credentials }}'
 
     - id: 'deploy'
-      uses: 'google-github-actions/deploy-cloud-functions@v0'
+      uses: 'google-github-actions/deploy-cloud-functions@v0.7.2'
       with:
         name: 'solana-worker'
         runtime: 'nodejs16'
