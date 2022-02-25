@@ -30,6 +30,7 @@ jobs:
         name: 'solana-worker'
         runtime: 'nodejs16'
         entry_point: 'main'
+        service_account: 'github-actions@crypto-342412.iam.gserviceaccount.com'
         event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
         event_trigger_resource: 'projects/crypto-342412/topics/github-actions-deploy'
         event_trigger_retry: False
