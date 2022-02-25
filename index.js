@@ -61,6 +61,6 @@ const getOrcaData = async () => {
 
 exports.main = async () => {
     return getOrcaData().then(data => {
-        appendSheet([[data.timestamp, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct]]).then(console.log)
+        appendSheet([[data.timestamp, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]).then(console.log)
     })
 };
