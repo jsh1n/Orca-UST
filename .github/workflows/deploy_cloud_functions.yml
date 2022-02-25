@@ -20,8 +20,8 @@ jobs:
       uses: google-github-actions/auth@v0
       name: 'Authenticate to Google Cloud'
       with:
-        workload_identity_provider: 'projects/674562769994/locations/global/workloadIdentityPools/solana-pool/providers/solana-provider'
-        service_account: 'github-actions-deployment@carbon-cacao-342313.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/266656630311/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'github-actions@crypto-342412.iam.gserviceaccount.com'
 
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloud-functions@v0.7.2'
@@ -30,8 +30,7 @@ jobs:
         name: 'solana-worker'
         runtime: 'nodejs16'
         entry_point: 'main'
-        event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
-        event_trigger_resource: 'projects/carbon-cacao-342313/topics/everyhours'
-        event_trigger_retry: False
         env_vars: 'SPREADSHEET_ID=1HWjwozrxuXa6xSgklXMo4kQzVhHxEyX70pBLiv-VAd8'
-        secret_environment_variables: 'NODERPC_ENDPOINT=projects/674562769994/secrets/getBlockURL/versions/1,OWNER_PUBKEY=projects/674562769994/secrets/wataru_pubkey/versions/1'
+        secret_environment_variables: 'NODERPC_ENDPOINT=projects/266656630311/secrets/NODERPC_ENDPOINT/versions/1,OWNER_PUBKEY=projects/266656630311/secrets/OWNER_PUBKEY/versions/1
+
+'
