@@ -1,0 +1,38 @@
+name: Deploy Cloud Functions
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ release ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - id: auth
+      uses: google-github-actions/auth@v0
+      name: 'Authenticate to Google Cloud'
+      with:
+        workload_identity_provider: 'projects/266656630311/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'github-actions@crypto-342412.iam.gserviceaccount.com'
+
+    - id: 'deploy'
+      uses: 'google-github-actions/deploy-cloud-functions@v0.7.2'
+      timeout-minutes: 10
+      with:
+        name: 'solana-worker'
+        runtime: 'nodejs16'
+        entry_point: 'main'
+        service_account_email: 'solana-watcher@crypto-342412.iam.gserviceaccount.com'
+        event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+        event_trigger_resource: 'projects/crypto-342412/topics/github-actions-deploy'
+        event_trigger_retry: False
+        env_vars: 'SPREADSHEET_ID=1HWjwozrxuXa6xSgklXMo4kQzVhHxEyX70pBLiv-VAd8'
+        secret_environment_variables: 'NODERPC_ENDPOINT=projects/266656630311/secrets/NODERPC_ENDPOINT/versions/1,OWNER_PUBKEY=projects/266656630311/secrets/OWNER_PUBKEY/versions/1'
