@@ -1,0 +1,27 @@
+name: Deploy Cloud Functions
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ release ]
+
+jobs:
+  job_id:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        credentials_json: '${{ secrets.gcp_credentials }}'
+
+    - id: 'deploy'
+      uses: 'google-github-actions/deploy-cloud-functions@v0'
+      with:
+        name: 'solana-worker'
+        runtime: 'nodejs16'
+        secret_environment_variables: 'NODERPC_ENDPOINT=projects/674562769994/secrets/getBlockURL,OWNER_PUBKEY=projects/674562769994/secrets/wataru_pubkey'

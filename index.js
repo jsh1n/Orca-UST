@@ -1,13 +1,7 @@
-const dotenv = require("dotenv");
-
 const { Connection, PublicKey } = require("@solana/web3.js");
 const { getOrca, OrcaFarmConfig, OrcaPoolConfig } = require("@orca-so/sdk");
 
 const { google } = require("googleapis");
-
-
-dotenv.config()
-
 
 const appendSheet = (rows) => {
   const scopes = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -33,11 +27,9 @@ const appendSheet = (rows) => {
 
 const getOrcaData = () => {
   const rpcEndpoint = process.env.NODERPC_ENDPOINT
-  const apiKey = process.env.NODERPC_API_KEY
   const ownerPubkey = process.env.OWNER_PUBKEY
 
-  const url = `${rpcEndpoint}?api_key=${apiKey}`
-  const connection = new Connection(url, "singleGossip");
+  const connection = new Connection(rpcEndpoint, "singleGossip");
 
   const orca = getOrca(connection);
   const pubkey = new PublicKey(ownerPubkey)
