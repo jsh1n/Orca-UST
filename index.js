@@ -1,16 +1,42 @@
-import { Connection, PublicKey } from "@solana/web3.js";
-import { getOrca, OrcaFarmConfig, OrcaPoolConfig } from "@orca-so/sdk";
-import Decimal from "decimal.js";
-import * as dotenv from "dotenv";
+const dotenv = require("dotenv");
+
+const { Connection, PublicKey } = require("@solana/web3.js");
+const { getOrca, OrcaFarmConfig, OrcaPoolConfig } = require("@orca-so/sdk");
+
+const { google } = require("googleapis");
+
 
 dotenv.config()
 
-const main = async () => {
+
+const appendSheet = (rows) => {
+  const scopes = ['https://www.googleapis.com/auth/spreadsheets'];
+  const spreadsheetId = process.env.SPREADSHEET_ID
+  return google.auth.getClient({
+          scopes
+      })
+      .then(auth => {
+          const sheets = google.sheets('v4');
+          return sheets.spreadsheets.values.append({
+              auth,
+              spreadsheetId,
+              range: "Sheet1!A2",
+              valueInputOption: "RAW",
+              insertDataOption: "INSERT_ROWS",
+              resource: {
+                  values: rows
+              }
+          });
+      })
+}
+
+
+const getOrcaData = () => {
   const rpcEndpoint = process.env.NODERPC_ENDPOINT
   const apiKey = process.env.NODERPC_API_KEY
   const ownerPubkey = process.env.OWNER_PUBKEY
+
   const url = `${rpcEndpoint}?api_key=${apiKey}`
-  console.log(url)
   const connection = new Connection(url, "singleGossip");
 
   const orca = getOrca(connection);
@@ -19,26 +45,23 @@ const main = async () => {
   const solUsdcAq = orca.getFarm(OrcaFarmConfig.SOL_USDC_AQ)
   const solUsdcPool = orca.getPool(OrcaPoolConfig.SOL_USDC)
 
-  const farmBalance = await solUsdcAq.getFarmBalance(pubkey);
-  const unclaimedBalance = await solUsdcAq.getHarvestableAmount(pubkey)
-  console.log(`Farm Token Balance: ${farmBalance.toNumber()}`)
-  console.log(`Unclaimed Balance: ${unclaimedBalance.toNumber()}`)
+  return solUsdcAq.getFarmBalance(pubkey).then(farmBalance => {
+    const withdrawTokenMint = solUsdcPool.getPoolTokenMint();
+    return solUsdcPool.getWithdrawQuote(
+      farmBalance,
+      withdrawTokenMint
+    ).then(res => {
+        const now = new Date();
 
-  const withdrawTokenMint = solUsdcPool.getPoolTokenMint();
-  const { maxPoolTokenAmountIn, minTokenAOut, minTokenBOut } = await solUsdcPool.getWithdrawQuote(
-    farmBalance,
-    withdrawTokenMint
-  );
-
-  console.log(
-    `Withdraw at most ${maxPoolTokenAmountIn.toNumber()} SOL_USDC LP token for at least ${minTokenAOut.toNumber()} SOL and ${minTokenBOut.toNumber()} USDC`
-  );
-};
-
-main()
-  .then(() => {
-    console.log("Done");
+        return {
+            timestamp: now, maxPoolTokenAmountIn: res.maxPoolTokenAmountIn.toNumber(), minTokenAOut: res.minTokenAOut.toNumber(), minTokenBOut: res.minTokenBOut.toNumber(), constantProduct: res.minTokenAOut.toNumber() * res.minTokenBOut.toNumber()
+        }
+    }).catch(console.error)
   })
-  .catch((e) => {
-    console.error(e);
-  });
+}
+
+exports.main = async () => {
+    return getOrcaData().then(data => {
+        appendSheet([[data.timestamp, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct]]).then(console.log)
+    })
+};

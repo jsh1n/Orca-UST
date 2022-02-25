@@ -2,7 +2,6 @@
   "name": "orca-ust",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "node index.js"
   },
@@ -11,6 +10,7 @@
     "@orca-so/sdk": "^1.2.23",
     "@solana/web3.js": "^1.35.1",
     "decimal.js": "^10.3.1",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "googleapis": "^95.0.0"
   }
 }
