@@ -103,7 +103,7 @@ exports.main = async () => {
     })
     getSolendData(conn, pubkey).then(data => {
         const ustdeposit = data.deposits.find(d => d.symbol == "UST")
-        const ustborrow = data.borrows.find(b => b.symbol == "SOL")
+        const solborrow = data.borrows.find(b => b.symbol == "SOL")
         appendSheet('Sheet2!A2', [[now, ustdeposit.balance, solborrow.balance]]).then(console.log)
     })
 };
