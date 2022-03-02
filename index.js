@@ -85,10 +85,9 @@ const getOrcaData = async (conn, pubkey) => {
         farmBalance,
         withdrawTokenMint
       ).then(res => {
-          const now = new Date();
 
           return {
-              timestamp: now, maxPoolTokenAmountIn: res.maxPoolTokenAmountIn.toNumber(), minTokenAOut: res.minTokenAOut.toNumber(), minTokenBOut: res.minTokenBOut.toNumber(), constantProduct: res.minTokenAOut.toNumber() * res.minTokenBOut.toNumber(), unclaimedOrca: unclaimedOrca.toNumber(),
+              maxPoolTokenAmountIn: res.maxPoolTokenAmountIn.toNumber(), minTokenAOut: res.minTokenAOut.toNumber(), minTokenBOut: res.minTokenBOut.toNumber(), constantProduct: res.minTokenAOut.toNumber() * res.minTokenBOut.toNumber(), unclaimedOrca: unclaimedOrca.toNumber(),
           }
     })
     }).catch(console.error)
@@ -98,12 +97,13 @@ const getOrcaData = async (conn, pubkey) => {
 exports.main = async () => {
     const pubkey = new PublicKey(process.env.OWNER_PUBKEY)
     const conn = new Connection(process.env.NODERPC_ENDPOINT, {commit: 'finalized'})
+    const now = new Date();
     getOrcaData(conn, pubkey).then(data => {
-        appendSheet('Sheet1!A2', [[data.timestamp, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]).then(console.log)
+        appendSheet('Sheet1!A2', [[now, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]).then(console.log)
     })
     getSolendData(conn, pubkey).then(data => {
         const ustdeposit = data.deposits.find(d => d.symbol == "UST")
         const ustborrow = data.borrows.find(b => b.symbol == "SOL")
-        appendSheet('Sheet2!A2', [[ustdeposit.balance, solborrow.balance]]).then(console.log)
+        appendSheet('Sheet2!A2', [[now, ustdeposit.balance, solborrow.balance]]).then(console.log)
     })
 };
