@@ -36,7 +36,6 @@ const getSolendData = async (conn, pubkey) => {
     conn,
     'production'
   );
-  const pubkey = new PublicKey(pubkey)
   const obligation = await market.fetchObligationByWallet(pubkey);
 
   const tokensMap = new Map();
