@@ -97,13 +97,21 @@ const getOrcaData = async (conn, pubkey) => {
 exports.main = async () => {
     const pubkey = new PublicKey(process.env.OWNER_PUBKEY)
     const conn = new Connection(process.env.NODERPC_ENDPOINT, {commit: 'finalized'})
-    const latestSlot = await conn.getSlot();
-    getOrcaData(conn, pubkey).then(data => {
-        appendSheet('Sheet1!A2', [[latestSlot, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]).then(console.log)
-    })
-    getSolendData(conn, pubkey).then(data => {
-        const ustdeposit = data.deposits.find(d => d.symbol == "UST")
-        const solborrow = data.borrows.find(b => b.symbol == "SOL")
-        appendSheet('Sheet2!A2', [[latestSlot, ustdeposit.balance, solborrow.balance]]).then(console.log)
-    })
+    return conn.getSlot().then((slot) => {
+      const promises = []
+      promises.push(conn.getBlockTime(slot));
+      promises.push(getOrcaData(conn, pubkey));
+      promises.push(getSolendData(conn, pubkey));
+      return Promise.all(promises).then([blocktime, orcaData, solendData] => {
+        const ps = []
+        ps.push(appendSheet('Sheet1!A2', [[slot, blocktime,data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]));
+        ps.push(getSolendData(conn, pubkey).then(data => {
+          const ustdeposit = data.deposits.find(d => d.symbol == "UST")
+          const solborrow = data.borrows.find(b => b.symbol == "SOL")
+          appendSheet('Sheet2!A2', [[slot, blocktime, ustdeposit.balance, solborrow.balance]])
+        }));
+        return Promise.all(ps).then(console.log);
+        })
+      })
+    }
 };
