@@ -35,4 +35,4 @@ jobs:
         event_trigger_resource: 'projects/crypto-342412/topics/github-actions-deploy'
         event_trigger_retry: False
         env_vars: 'SPREADSHEET_ID=1HWjwozrxuXa6xSgklXMo4kQzVhHxEyX70pBLiv-VAd8'
-        secret_environment_variables: 'NODERPC_ENDPOINT=projects/266656630311/secrets/NODERPC_ENDPOINT,OWNER_PUBKEY=projects/266656630311/secrets/OWNER_PUBKEY'
+        secret_environment_variables: 'NODERPC_ENDPOINT=projects/266656630311/secrets/NODERPC_ENDPOINT/versions/latest,OWNER_PUBKEY=projects/266656630311/secrets/OWNER_PUBKEY/versions/latest'
