@@ -102,7 +102,7 @@ exports.main = async () => {
       promises.push(conn.getBlockTime(slot));
       promises.push(getOrcaData(conn, pubkey));
       promises.push(getSolendData(conn, pubkey));
-      return Promise.all(promises).then([blocktime, orcaData, solendData] => {
+      return Promise.all(promises).then(([blocktime, orcaData, solendData]) => {
         const ps = []
         ps.push(appendSheet('Sheet1!A2', [[slot, blocktime,data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]));
         ps.push(getSolendData(conn, pubkey).then(data => {
