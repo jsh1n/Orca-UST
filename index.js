@@ -112,6 +112,5 @@ exports.main = async () => {
         }));
         return Promise.all(ps).then(console.log);
         })
-      })
-    }
+    })
 };
