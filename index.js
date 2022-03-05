@@ -104,11 +104,10 @@ exports.main = async () => {
       promises.push(getSolendData(conn, pubkey));
       return Promise.all(promises).then(([blocktime, orcaData, solendData]) => {
         const ps = []
-        ps.push(appendSheet('Sheet1!A2', [[slot, blocktime,data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]));
-        ps.push(getSolendData(conn, pubkey).then(data => {
-          const ustdeposit = data.deposits.find(d => d.symbol == "UST")
-          const solborrow = data.borrows.find(b => b.symbol == "SOL")
-          appendSheet('Sheet2!A2', [[slot, blocktime, ustdeposit.balance, solborrow.balance]])
+        appendSheet('Sheet1!A2', [[slot, blocktime, orcaData.maxPoolTokenAmountIn, orcaData.minTokenAOut, orcaData.minTokenBOut, orcaData.constantProduct, orcaData.unclaimedOrca]]));
+        const ustdeposit = solendData.deposits.find(d => d.symbol == "UST")
+        const solborrow = solendData.borrows.find(b => b.symbol == "SOL")
+        appendSheet('Sheet2!A2', [[slot, blocktime, ustdeposit.balance, solborrow.balance]])
         }));
         return Promise.all(ps).then(console.log);
         })
