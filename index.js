@@ -97,13 +97,13 @@ const getOrcaData = async (conn, pubkey) => {
 exports.main = async () => {
     const pubkey = new PublicKey(process.env.OWNER_PUBKEY)
     const conn = new Connection(process.env.NODERPC_ENDPOINT, {commit: 'finalized'})
-    const now = new Date();
+    const latestSlot = await conn.getSlot();
     getOrcaData(conn, pubkey).then(data => {
-        appendSheet('Sheet1!A2', [[now, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]).then(console.log)
+        appendSheet('Sheet1!A2', [[latestSlot, data.maxPoolTokenAmountIn, data.minTokenAOut, data.minTokenBOut, data.constantProduct, data.unclaimedOrca]]).then(console.log)
     })
     getSolendData(conn, pubkey).then(data => {
         const ustdeposit = data.deposits.find(d => d.symbol == "UST")
         const solborrow = data.borrows.find(b => b.symbol == "SOL")
-        appendSheet('Sheet2!A2', [[now, ustdeposit.balance, solborrow.balance]]).then(console.log)
+        appendSheet('Sheet2!A2', [[latestSlot, ustdeposit.balance, solborrow.balance]]).then(console.log)
     })
 };
